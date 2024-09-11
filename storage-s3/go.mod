@@ -3,8 +3,8 @@ module github.com/apache/incubator-answer-plugins/storage-s3
 go 1.19
 
 require (
-	github.com/apache/incubator-answer v1.3.1-0.20240506084933-9681c026adfe
-	github.com/apache/incubator-answer-plugins/util v0.0.0-20240715093259-8be56d60310a
+	github.com/apache/incubator-answer v1.3.6
+	github.com/apache/incubator-answer-plugins/util v1.0.2
 	github.com/aws/aws-sdk-go v1.44.314
 )
 

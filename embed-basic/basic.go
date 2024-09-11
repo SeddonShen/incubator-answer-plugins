@@ -23,10 +23,14 @@ import (
 	"embed"
 	"encoding/json"
 	"github.com/apache/incubator-answer-plugins/util"
+	"github.com/gin-gonic/gin"
 
 	"github.com/apache/incubator-answer-plugins/embed-basic/i18n"
 	"github.com/apache/incubator-answer/plugin"
 )
+
+//go:embed  info.yaml
+var Info embed.FS
 
 //go:embed components
 var Build embed.FS
@@ -55,7 +59,7 @@ func init() {
 
 func (e *Embed) Info() plugin.Info {
 	info := &util.Info{}
-	info.GetInfo()
+	info.GetInfo(Info)
 
 	return plugin.Info{
 		Name:        plugin.MakeTranslator(i18n.InfoName),
@@ -156,4 +160,19 @@ func (e *Embed) ConfigFields() []plugin.ConfigField {
 
 func (e *Embed) ConfigReceiver(config []byte) error {
 	c := &EmbedConfig{}
-	_ 
+	_ = json.Unmarshal(config, c)
+	e.Config = c
+	return nil
+}
+
+// GetEmbedConfigs get embed configs
+func (e *Embed) GetEmbedConfigs(ctx *gin.Context) (embedConfigs []*plugin.EmbedConfig, err error) {
+	embedConfigs = make([]*plugin.EmbedConfig, 0)
+	for _, field := range e.ConfigFields() {
+		embedConfigs = append(embedConfigs, &plugin.EmbedConfig{
+			Platform: field.Name,
+			Enable:   field.Value.(bool),
+		})
+	}
+	return
+}

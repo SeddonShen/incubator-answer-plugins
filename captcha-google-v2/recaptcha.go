@@ -20,6 +20,7 @@
 package recaptcha
 
 import (
+	"embed"
 	"github.com/apache/incubator-answer-plugins/util"
 	"io"
 	"net/http"
@@ -33,6 +34,9 @@ import (
 	"github.com/segmentfault/pacman/log"
 )
 
+//go:embed  info.yaml
+var Info embed.FS
+
 type Captcha struct {
 	Config *CaptchaConfig
 }
@@ -40,6 +44,7 @@ type Captcha struct {
 type CaptchaConfig struct {
 	SiteKey   string `json:"site_key"`
 	SecretKey string `json:"secret_key"`
+	SiteVerifyEndpoint string `json:"site_verify_endpoint"`
 }
 
 type GoogleCaptchaResponse struct {
@@ -55,7 +60,7 @@ func init() {
 
 func (c *Captcha) Info() plugin.Info {
 	info := &util.Info{}
-	info.GetInfo()
+	info.GetInfo(Info)
 
 	return plugin.Info{
 		Name:        plugin.MakeTranslator(i18n.InfoName),
@@ -84,7 +89,11 @@ func (c *Captcha) Verify(captcha, userInput string) (pass bool) {
 	}
 	cli := &http.Client{}
 	cli.Timeout = 10 * time.Second
-	resp, err := cli.PostForm("https://www.google.com/recaptcha/api/siteverify", map[string][]string{
+	siteVerifyEndpoint := c.Config.SiteVerifyEndpoint
+	if siteVerifyEndpoint == "" {
+		siteVerifyEndpoint = "https://www.google.com/recaptcha/api/siteverify"
+	}
+	resp, err := cli.PostForm(siteVerifyEndpoint, map[string][]string{
 		"secret":   {c.Config.SecretKey},
 		"response": {userInput},
 	})
@@ -130,6 +139,17 @@ func (c *Captcha) ConfigFields() []plugin.ConfigField {
 				InputType: plugin.InputTypeText,
 			},
 			Value: c.Config.SecretKey,
+		},
+		{
+			Name:        "site_verify_endpoint",
+			Type:        plugin.ConfigTypeInput,
+			Title:       plugin.MakeTranslator(i18n.ConfigSiteVerifyEndpointTitle),
+			Description: plugin.MakeTranslator(i18n.ConfigSiteVerifyEndpointDescription),
+			Required:    false,
+			UIOptions: plugin.ConfigFieldUIOptions{
+				InputType: plugin.InputTypeText,
+			},
+			Value: c.Config.SiteVerifyEndpoint,
 		},
 	}
 }
