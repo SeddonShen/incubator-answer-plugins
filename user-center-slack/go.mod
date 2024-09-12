@@ -8,6 +8,7 @@ require (
 	github.com/apache/incubator-answer v1.3.6
 	github.com/apache/incubator-answer-plugins/util v1.0.2
 	github.com/gin-gonic/gin v1.9.1
+	github.com/golang/mock v1.6.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/segmentfault/pacman v1.0.5-0.20230822083413-c0075a2d401f
 	github.com/stretchr/testify v1.8.4
@@ -39,7 +40,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/segmentfault/pacman/contrib/i18n v0.0.0-20230516093754-b76aef1c1150 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect

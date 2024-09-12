@@ -48,6 +48,10 @@ type SlackUserInfo struct {
 	IsAvailable bool
 }
 
+type ISlackClient interface {
+	ListUsers() ([]SlackUserDetail, error)
+}
+
 // ExchangeCodeForUser 通过 OAuth 授权码获取 Slack 用户访问令牌和用户信息
 func (sc *SlackClient) ExchangeCodeForUser(code string) (*SlackUserInfo, error) {
 	// 设置 OAuth 交换令牌请求的 URL
