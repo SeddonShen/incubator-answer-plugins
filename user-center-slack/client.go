@@ -1,19 +1,20 @@
 package slack
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
-	"io/ioutil"
+	"strings"
+
 	"github.com/segmentfault/pacman/log"
 )
 
 // SlackClient 用于与 Slack API 进行交互
 type SlackClient struct {
-	AccessToken string
-	ClientID    string
+	AccessToken  string
+	ClientID     string
 	ClientSecret string
 	RedirectURI  string
 }
@@ -21,7 +22,7 @@ type SlackClient struct {
 // NewSlackClient 创建一个新的 SlackClient
 func NewSlackClient() *SlackClient {
 	return &SlackClient{
-		ClientID:     "your-slack-client-id",  // 从配置文件或环境变量中加载
+		ClientID:     "your-slack-client-id", // 从配置文件或环境变量中加载
 		ClientSecret: "your-slack-client-secret",
 		RedirectURI:  "your-slack-redirect-uri",
 	}
@@ -29,21 +30,21 @@ func NewSlackClient() *SlackClient {
 
 // SlackUserDetail 是 Slack 用户详细信息的结构体
 type SlackUserDetail struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	Deleted bool   `json:"deleted"`
-	IsActive bool  `json:"is_active"`
-	Profile struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Deleted  bool   `json:"deleted"`
+	IsActive bool   `json:"is_active"`
+	Profile  struct {
 		Email string `json:"email"`
 	} `json:"profile"`
 }
 
 // SlackUserInfo 是 OAuth 授权后的用户信息
 type SlackUserInfo struct {
-	ID       string `json:"id"`
-	Email    string `json:"email"`
-	Name     string `json:"name"`
-	Avatar   string `json:"image_192"`
+	ID          string `json:"id"`
+	Email       string `json:"email"`
+	Name        string `json:"name"`
+	Avatar      string `json:"image_192"`
 	IsAvailable bool
 }
 
@@ -70,10 +71,10 @@ func (sc *SlackClient) ExchangeCodeForUser(code string) (*SlackUserInfo, error) 
 
 	// 解析 OAuth 交换后的返回信息
 	var tokenResp struct {
-		AccessToken string      `json:"access_token"`
+		AccessToken string        `json:"access_token"`
 		AuthedUser  SlackUserInfo `json:"authed_user"`
-		OK          bool        `json:"ok"`
-		Error       string      `json:"error"`
+		OK          bool          `json:"ok"`
+		Error       string        `json:"error"`
 	}
 
 	if err := json.Unmarshal(body, &tokenResp); err != nil {
@@ -168,3 +169,44 @@ func (sc *SlackClient) ListUsers() ([]SlackUserDetail, error) {
 	return result.Members, nil
 }
 
+// SendMessage sends a message to a Slack user using Slack API
+func (sc *SlackClient) SendMessage(userID string, message string) error {
+	data := url.Values{}
+	data.Set("channel", userID) // Slack user ID or channel ID
+	data.Set("text", message)
+
+	req, err := http.NewRequest("POST", "https://slack.com/api/chat.postMessage", strings.NewReader(data.Encode()))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Authorization", "Bearer "+sc.AccessToken)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	var result struct {
+		OK    bool   `json:"ok"`
+		Error string `json:"error"`
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return err
+	}
+
+	if !result.OK {
+		return fmt.Errorf("Slack API error: %s", result.Error)
+	}
+
+	return nil
+}

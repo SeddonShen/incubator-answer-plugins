@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package wecom
+package slack
 
 import (
 	"encoding/json"
 	"fmt"
 	"sync"
 
-	"github.com/apache/incubator-answer-plugins/user-center-wecom/i18n"
+	"github.com/apache/incubator-answer-plugins/user-center-slack/i18n"
 	"github.com/apache/incubator-answer/plugin"
 	"github.com/segmentfault/pacman/log"
 )

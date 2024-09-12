@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package wecom
+package slack
 
 type Department struct {
 	Id               int      `json:"id"`

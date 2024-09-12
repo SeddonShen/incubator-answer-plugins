@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package wecom
+package slack
 
 import (
 	"time"
@@ -27,12 +27,14 @@ import (
 
 func (uc *UserCenter) CronSyncData() {
 	go func() {
-		ticker := time.NewTicker(time.Hour)
+		ticker := time.NewTicker(time.Hour) // 每小时触发一次
+		defer ticker.Stop()                 // 停止ticker，防止泄露
+
 		for {
 			select {
 			case <-ticker.C:
-				log.Infof("user center try to sync data")
-				uc.syncCompany()
+				log.Infof("UserCenter is syncing Slack user data...")
+				uc.syncSlackUsers() // 调用同步Slack用户的函数
 			}
 		}
 	}()

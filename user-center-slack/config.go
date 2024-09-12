@@ -17,22 +17,30 @@
  * under the License.
  */
 
-package wecom
+package slack
 
 import (
 	"encoding/json"
 	"time"
 
-	"github.com/apache/incubator-answer-plugins/user-center-wecom/i18n"
+	"github.com/apache/incubator-answer-plugins/user-center-slack/i18n"
 	"github.com/apache/incubator-answer/plugin"
 )
 
 type UserCenterConfig struct {
-	CorpID       string `json:"corp_id"`
-	CorpSecret   string `json:"corp_secret"`
-	AgentID      string `json:"agent_id"`
-	AutoSync     bool   `json:"auto_sync"`
-	Notification bool   `json:"notification"`
+	ClientID     string `json:"client_id"`     // Slack Client ID
+	ClientSecret string `json:"client_secret"` // Slack Client Secret
+	RedirectURI  string `json:"redirect_uri"`  // OAuth Redirect URI
+	AutoSync     bool   `json:"auto_sync"`     // 是否自动同步
+	Notification bool   `json:"notification"`  // 是否开启通知
+}
+
+func NewSlackClientWithConfig(clientID, clientSecret, redirectURI string) *SlackClient {
+	return &SlackClient{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		RedirectURI:  redirectURI,
+	}
 }
 
 func (uc *UserCenter) ConfigFields() []plugin.ConfigField {
@@ -74,7 +82,7 @@ func (uc *UserCenter) ConfigFields() []plugin.ConfigField {
 			UIOptions: plugin.ConfigFieldUIOptions{
 				Text: syncNowLabel,
 				Action: &plugin.UIOptionAction{
-					Url:    "/answer/admin/api/wecom/sync",
+					Url:    "/answer/admin/api/slack/sync", // 修改为 Slack 的同步 URL
 					Method: "get",
 					Loading: &plugin.LoadingAction{
 						Text:  plugin.MakeTranslator(i18n.ConfigSyncNowLabelForDoing),
@@ -89,34 +97,34 @@ func (uc *UserCenter) ConfigFields() []plugin.ConfigField {
 			},
 		},
 		{
-			Name:     "corp_id",
+			Name:     "client_id",
 			Type:     plugin.ConfigTypeInput,
-			Title:    plugin.MakeTranslator(i18n.ConfigCorpIdTitle),
+			Title:    plugin.MakeTranslator(i18n.ConfigClientIDTitle), // Slack Client ID
 			Required: true,
 			UIOptions: plugin.ConfigFieldUIOptions{
 				InputType: plugin.InputTypeText,
 			},
-			Value: uc.Config.CorpID,
+			Value: uc.Config.ClientID,
 		},
 		{
-			Name:     "corp_secret",
+			Name:     "client_secret",
 			Type:     plugin.ConfigTypeInput,
-			Title:    plugin.MakeTranslator(i18n.ConfigCorpSecretTitle),
+			Title:    plugin.MakeTranslator(i18n.ConfigClientSecretTitle), // Slack Client Secret
 			Required: true,
 			UIOptions: plugin.ConfigFieldUIOptions{
 				InputType: plugin.InputTypePassword,
 			},
-			Value: uc.Config.CorpSecret,
+			Value: uc.Config.ClientSecret,
 		},
 		{
-			Name:     "agent_id",
+			Name:     "redirect_uri",
 			Type:     plugin.ConfigTypeInput,
-			Title:    plugin.MakeTranslator(i18n.ConfigAgentIDTitle),
+			Title:    plugin.MakeTranslator(i18n.ConfigRedirectURITitle), // Slack Redirect URI
 			Required: true,
 			UIOptions: plugin.ConfigFieldUIOptions{
 				InputType: plugin.InputTypeText,
 			},
-			Value: uc.Config.AgentID,
+			Value: uc.Config.RedirectURI,
 		},
 		{
 			Name:        "notification",
@@ -133,9 +141,17 @@ func (uc *UserCenter) ConfigFields() []plugin.ConfigField {
 
 func (uc *UserCenter) ConfigReceiver(config []byte) error {
 	c := &UserCenterConfig{}
-	_ = json.Unmarshal(config, c)
+	err := json.Unmarshal(config, c)
+	if err != nil {
+		return err
+	}
 	uc.Config = c
-	uc.Company = NewCompany(c.CorpID, c.CorpSecret, c.AgentID)
-	uc.asyncCompany()
+
+	// 初始化 Slack 客户端
+	uc.SlackClient = NewSlackClientWithConfig(c.ClientID, c.ClientSecret, c.RedirectURI)
+
+	if uc.Config.AutoSync {
+		uc.CronSyncData() // 如果启用了自动同步，启动同步任务
+	}
 	return nil
 }
