@@ -22,7 +22,7 @@ package wecom
 import (
 	"strings"
 
-	wecomI18n "github.com/apache/incubator-answer-plugins/user-center-wecom/i18n"
+	wecomI18n "github.com/Anan1225/incubator-answer-plugins/user-center-wecom/i18n"
 	"github.com/apache/incubator-answer/plugin"
 	"github.com/segmentfault/pacman/i18n"
 	"github.com/segmentfault/pacman/log"

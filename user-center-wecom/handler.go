@@ -26,7 +26,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/apache/incubator-answer-plugins/user-center-wecom/i18n"
+	"github.com/Anan1225/incubator-answer-plugins/user-center-wecom/i18n"
 	"github.com/apache/incubator-answer/plugin"
 	"github.com/gin-gonic/gin"
 )
