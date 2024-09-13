@@ -53,4 +53,4 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-// replace github.com/apache/incubator-answer-plugins/user-center-slack => github.com/Anan1225/incubator-answer-plugins/user-center-slack v0.0.0-20240911152455-9d859e9da252
+// replace github.com/apache/incubator-answer-plugins/user-center-slack => github.com/SeddonShen/incubator-answer-plugins/user-center-slack v0.0.0-20240911152455-9d859e9da252

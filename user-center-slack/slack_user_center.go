@@ -118,7 +118,7 @@ func (uc *UserCenter) Info() plugin.Info {
 		Description: plugin.MakeTranslator("A plugin for integrating Slack user management"),
 		Author:      "AnanChen",
 		Version:     "1.0.0",
-		Link:        "https://github.com/Anan1225/incubator-answer-plugins/user-center-slack",
+		Link:        "https://github.com/SeddonShen/incubator-answer-plugins/user-center-slack",
 	}
 }
 

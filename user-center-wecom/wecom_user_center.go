@@ -26,7 +26,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Anan1225/incubator-answer-plugins/user-center-wecom/i18n"
+	"github.com/SeddonShen/incubator-answer-plugins/user-center-wecom/i18n"
 	"github.com/apache/incubator-answer-plugins/util"
 	"github.com/apache/incubator-answer/plugin"
 	"github.com/gin-gonic/gin"
