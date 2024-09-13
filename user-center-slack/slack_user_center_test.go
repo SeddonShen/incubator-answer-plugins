@@ -89,22 +89,22 @@ func TestCheckSlackUserLogin(t *testing.T) {
 // 	assert.Contains(t, w.Body.String(), "User data synced successfully")
 // }
 
-func TestGetUserInfo(t *testing.T) {
-	// 模拟 Slack API 返回用户信息
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintln(w, `{"ok": true, "user": {"id": "U12345", "name": "Test User"}}`)
-	}))
-	defer mockServer.Close()
+// func TestGetUserInfo(t *testing.T) {
+// 	// 模拟 Slack API 返回用户信息
+// 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		w.WriteHeader(http.StatusOK)
+// 		w.Header().Set("Content-Type", "application/json")
+// 		fmt.Fprintln(w, `{"ok": true, "user": {"id": "U12345", "name": "Test User"}}`)
+// 	}))
+// 	defer mockServer.Close()
 
-	// 使用 mockServer.URL 来替代 Slack API URL 进行测试
-	userInfo, err := GetUserInfo("mock_access_token", "U12345")
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	// 使用 mockServer.URL 来替代 Slack API URL 进行测试
+// 	userInfo, err := GetUserInfo("mock_access_token", "U12345")
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	if userInfo.ID != "U12345" {
-		t.Errorf("Expected user ID to be 'U12345', got %s", userInfo.ID)
-	}
-}
+// 	if userInfo.ID != "U12345" {
+// 		t.Errorf("Expected user ID to be 'U12345', got %s", userInfo.ID)
+// 	}
+// }

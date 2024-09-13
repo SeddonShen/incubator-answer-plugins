@@ -73,7 +73,6 @@ func (uc *UserCenter) UserStatus(externalID string) (userStatus plugin.UserStatu
 	}
 
 	// 获取用户的详细信息
-	// TODO
 	userDetailInfo, err := uc.SlackClient.GetUserDetailInfo(externalID) // 改为使用Slack API
 	if err != nil || userDetailInfo == nil {
 		log.Errorf("Failed to get Slack user detail info: %v", err)
