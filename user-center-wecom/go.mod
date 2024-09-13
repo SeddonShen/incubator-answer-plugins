@@ -1,4 +1,4 @@
-module github.com/apache/incubator-answer-plugins/user-center-wecom
+module github.com/Anan1225/incubator-answer-plugins/user-center-wecom
 
 go 1.19
 
