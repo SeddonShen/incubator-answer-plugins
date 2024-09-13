@@ -1,4 +1,4 @@
-module github.com/apache/incubator-answer-plugins/connector-github
+module github.com/Anan1225/incubator-answer-plugins/connector-github
 
 go 1.19
 
@@ -12,6 +12,7 @@ require (
 
 require (
 	github.com/LinkinStars/go-i18n/v2 v2.2.2 // indirect
+	github.com/apache/incubator-answer-plugins/connector-github v0.0.0-00010101000000-000000000000
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
@@ -50,5 +51,3 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-// replace github.com/apache/incubator-answer-plugins/connector-github => github.com/Anan1225/incubator-answer-plugins/connector-github v1.2.6
-replace github.com/apache/incubator-answer-plugins/connector-github => /root/incubator-answer-plugins/connector-github
